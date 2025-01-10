@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(MSBuildProjectDirectory)\$(OutputPath)obfuscated\$(TargetFileName)</StartProgram>
+  </PropertyGroup>
+</Project>

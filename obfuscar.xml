@@ -1,0 +1,9 @@
+<?xml version='1.0'?>
+<Obfuscator>
+  <Include path="obj\Debug\ObfuscarAdditional.xml" />
+
+  <Var name="KeepPublicApi" value="false" />
+  <Var name="HidePrivateApi" value="true" />
+
+  <Module file="$(InPath)\$(ModuleName)" />
+</Obfuscator>

@@ -1,0 +1,33 @@
+<Project>
+  <Target Name="MakeObfuscarInclude" AfterTargets="PostBuildEvent;ObfuscarProperties">
+    <PropertyGroup>
+      <ObfuscarTemp>$(BaseIntermediateOutputPath)\$(ConfigurationName)\</ObfuscarTemp>
+      <ObfuscarAdditional>$(ObfuscarTemp)\ObfuscarAdditional.xml</ObfuscarAdditional>
+      <ObfuscatedOutputPath>$(OutputPath)obfuscated</ObfuscatedOutputPath>
+      <ObfuscarPath>$(PkgObfuscar)\tools</ObfuscarPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <ObfuscarAssemblyReference Include="@(ReferencePath)" />
+      <ObfuscarAssemblyReference>
+        <DirectoryName>$([System.IO.Path]::GetDirectoryName(`%(Identity)`))</DirectoryName>
+      </ObfuscarAssemblyReference>
+    </ItemGroup>
+    <RemoveDuplicates Inputs="@(ObfuscarAssemblyReference->'%(DirectoryName)')">
+      <Output TaskParameter="Filtered" ItemName="ObfuscarAssemblyReferenceUnique" />
+    </RemoveDuplicates>
+    <ItemGroup>
+      <Line Include="&lt;%3Fxml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;%3F&gt;" />
+      <Line Include="&lt;Include&gt;" />
+      <Line Include="  &lt;Var name=&quot;InPath&quot; value=&quot;$(OutputPath)&quot; /&gt;" />
+      <Line Include="  &lt;Var name=&quot;OutPath&quot; value=&quot;$(ObfuscatedOutputPath)&quot; /&gt;" />
+      <Line Include="  &lt;Var name=&quot;ModuleName&quot; value=&quot;$(TargetFileName)&quot; /&gt;" />
+      <Line Include="  &lt;AssemblySearchPath path=&quot;%(ObfuscarAssemblyReferenceUnique.Identity)&quot; /&gt;" />
+      <Line Include="&lt;/Include&gt;" />
+    </ItemGroup>
+    <WriteLinesToFile File="$(ObfuscarAdditional)" Lines="@(Line)" Overwrite="true" />
+  </Target>
+  <Target Name="Obfuscate" AfterTargets="MakeObfuscarInclude">
+    <Message Text="Obfuscating, using $(ObfuscarPath)\obfuscar.console.exe, output to $(ObfuscatedOutputPath)" Importance="high" />
+    <Exec Command="$(ObfuscarPath)\obfuscar.console.exe obfuscar.xml" />
+  </Target>
+</Project>
